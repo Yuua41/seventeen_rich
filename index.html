@@ -42,18 +42,24 @@
       </section>
 
       <section id="button">
-        <button id="button_m">戻る用</button>
+        <button id="button_m">戻る</button>
         <button id="button_p">+1</button>
         <button id="button_con">決定</button>
       </section>
-      <section id="rule">
+
+      <div id="rule">
         <div class="rule">
-          <p>ルール説明</p>
-          <p>・1から17までの数字を順番に数える</p>
-          <p>・一度に数えられる数字は連続する3つの数字まで</p>
-          <p>・17を数えると負け</p>
+          <div>
+            <p style="font-size: 20px; font-weight: bold">ルール説明</p>
+            <p>・1から17までの数字を順番に数える</p>
+            <p>・一度に数えられる数字は連続する3つの数字まで</p>
+            <p>・17を数えると負け</p>
+          </div>
+          <div class="start-button-box">
+            <a class="start-button">ゲームスタート</a>
+          </div>
         </div>
-      </section>
+      </div>
     </main>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -89,7 +95,7 @@
 
       let count_n = 0;
       let count_p_click = 0; // プラスボタン
-      let count_m_click = 0; // マイナスボタン
+      let count_m_click = 0; // マイナスボタンは戻るボタンに名称変更
 
       const first_button = $("#button").html(); //newgameに書き換えたボタンを元に戻す用
 
@@ -342,8 +348,54 @@
       });
 
       $(document).ready(function () {
-        // ページ読み込み時ルール説明入れたかった
-        OneTurn(); //ボタンをクリックさせないため，1回消費させる
+        // ゲーム開始時の処理をすべてこの中に入れる
+        CPULevelDisplay();
+
+        const modal = document.getElementById("rule");
+
+        const startBtn = document.querySelector(".start-button"); // ゲームスタートボタンを取得
+
+        modal.style.display = "flex";
+
+        // メインコンテンツのボタンを非活性化 (モーダル表示中は操作させない)
+
+        $("#button button").prop("disabled", true);
+
+        $("#hamburger").prop("disabled", true).addClass("fix-menu-closed");
+
+        // モーダルを閉じてゲームを開始する
+
+        startBtn.addEventListener("click", () => {
+          // 1. 透明度を0にしてフェードアウトを開始
+          modal.style.opacity = "0";
+
+          // 2. 0.5秒後にdisplay: noneを適用し、アニメーション後に要素を消す
+          setTimeout(() => {
+            modal.style.display = "none";
+
+            // ゲームを開始する準備
+            OneTurn();
+
+            // ボタンを元に戻す
+            $("#button button").prop("disabled", false);
+          }, 1000);
+        });
+
+        // モーダルの外側がクリックされた時も閉じる
+
+        window.addEventListener("click", (event) => {
+          if (event.target === modal) {
+            modal.style.display = "none";
+
+            // ゲームを開始する準備
+
+            OneTurn();
+
+            //ボタンを元に戻す
+
+            $("#button button").prop("disabled", false);
+          }
+        });
       });
 
       //勝った時のボタン　レベルアップさせたい
