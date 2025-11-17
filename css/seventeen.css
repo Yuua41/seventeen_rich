@@ -1,0 +1,173 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body{
+  background-color: #fdfdfd;
+}
+
+button {
+  width: 200px;
+  height: 70px;
+}
+
+main {
+  max-width: auto;
+  height: 100vh;
+  margin: 0 auto;
+}
+
+section {
+  height: calc(100vh / 7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  width: auto;
+  height: 80px;
+  background-color: #39bcdd;
+}
+
+img{
+  width: 150px;
+}
+
+.rule{
+  padding: 5px 30px;
+}
+
+.relode a{
+    color: #fafafa;
+    font-size: 18px;
+    font-weight: bold;
+    background: #222222;
+    padding: 15px 150px;
+    transition: .5s;
+    display: inline-block;
+    text-decoration: none;
+}
+
+
+.relode a:hover{
+    border-radius: 12px;
+    transform: scale(1.1);
+}
+
+
+.lavel{
+  padding-left: 30px;
+}
+
+#button button {
+  font-size: 20px;
+  cursor: pointer; 
+  /* 指が出る */
+  border: color(black);
+  border-radius: 10px;
+  background-color: #909090;
+  transition: 0.2s;
+}
+
+#button button:disabled {
+  background-color: #cacaca;
+  cursor: not-allowed; 
+  /* 禁止マーク */
+}
+
+/* ハンバーガーメニュー */
+
+nav {
+  top: 100px; /* headerの下からメニューを開く */
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  right: 0;
+  text-align: right;
+  background-color: rgba(255, 255, 255, 0.9);
+
+}
+
+ul {
+  height: 0;
+  overflow: hidden;
+  transition: 0.3s;
+  list-style: none;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+li a {
+  padding: 8px;
+  font-size: 16px;
+  color: #464646;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+li a:hover {
+    background-color: #00a479;
+    z-index: 1;
+    font-weight: bold;
+    color: #fafafa;
+    /* 浮かせないと出ない？ */
+}
+
+.lavel{
+    display: flex;
+    align-items: flex-end;
+}
+
+.hamburger {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  cursor: pointer;
+  width: 32px;
+  height: 24px;
+  z-index: 10;
+}
+.hamburger span {
+  /*3本の線を作る*/
+  transition: all 0.3s;
+  position: absolute;
+  height: 2px;
+  background-color: #333;
+  width: 100%;
+  z-index: 10;
+}
+.hamburger span:nth-of-type(1) {
+  /*上の線の位置*/
+  top: 4px;
+}
+.hamburger span:nth-of-type(2) {
+  /*真ん中の線の位置*/
+  top: 12px;
+}
+.hamburger span:nth-of-type(3) {
+  /*下の線の位置*/
+  top: 20px;
+}
+.hamburger.open span:nth-of-type(1) {
+  /*openのとき、上の線を右斜めにする*/
+  top: 10px;
+  transform: translateY(6px) rotate(-33deg);
+}
+.hamburger.open span:nth-of-type(2) {
+  /*真ん中の線を消す*/
+  opacity: 0;
+}
+.hamburger.open span:nth-of-type(3) {
+  /*下の線を左斜めにする*/
+  top: 22px;
+  transform: translateY(-6px) rotate(33deg);
+}
+
+.fix-menu-closed{
+  opacity: 0.3;
+  cursor: default;
+  cursor: not-allowed; 
+  /* 禁止マーク */
+}

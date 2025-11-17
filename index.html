@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="jp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>17数える</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+JP"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/seventeen.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul id="header-menu">
+          <li><a href="#" id="level-normal">ふつう</a></li>
+          <li><a href="#" id="level-strong">つよい</a></li>
+          <li><a href="#" id="level-oni">おに</a></li>
+        </ul>
+      </nav>
+      <div id="hamburger" class="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </header>
+    <main>
+      <div id="cpu-level-display" class="lavel"></div>
+
+      <section id="cpu_image">
+        <img src="images/cpu_image_0.png" alt="" />
+      </section>
+
+      <section>
+        <h1>あなたの番です</h1>
+      </section>
+
+      <section id="count_report">
+        <p></p>
+      </section>
+      <section id="count">
+        <p></p>
+      </section>
+
+      <section id="button">
+        <button id="button_m">-1</button>
+        <button id="button_p">+1</button>
+        <button id="button_con">決定</button>
+      </section>
+      <section id="rule">
+        <div class="rule">
+          <p>ルール説明</p>
+          <p>・1から17までの数字を順番に数える</p>
+          <p>・一度に数えられる数字は連続する3つの数字まで</p>
+          <p>・17を数えると負け</p>
+        </div>
+      </section>
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+      // ハンバーガーメニュー
+      const menu = document.querySelector("#header-menu");
+      const btn = document.querySelector("#hamburger");
+
+      btn.addEventListener("click", () => {
+        if (btn.disabled) {
+          return;
+        }
+
+        btn.classList.toggle("open");
+        menu.classList.toggle("open");
+        if (menu.classList.contains("open")) {
+          menu.style.height = menu.scrollHeight + "px";
+        } else {
+          menu.style.height = "0";
+        }
+      });
+
+      let cpu_level = "normal"; //デフォルトの強さ普通
+
+      function CPULevelDisplay() {
+        const levelText = {
+          normal: "ふつうの人",
+          strong: "つよいねこ",
+          oni: "おにロボット",
+        };
+        $("#cpu-level-display").text(`CPU: ${levelText[cpu_level]}`);
+      }
+
+      let count_n = 0;
+      let count_p_click = 0; // プラスボタン
+      let count_m_click = 0; // マイナスボタン
+
+      const first_button = $("#button").html(); //newgameに書き換えたボタンを元に戻す用
+
+      $("#count p").text(count_n);
+      $("section h1").first().text("あなたの番です");
+      $("#count_report p").text(`現在のカウンター: ${count_n}`);
+
+      // 数字の色とフォント
+      function Fontsize_Color() {
+        if (count_n >= 0 && count_n <= 9) {
+          $("#count").css({ "font-size": "32px", color: "black" });
+        } else if (count_n >= 10 && count_n <= 13) {
+          $("#count").css({ "font-size": "48px", color: "#39bcdd" });
+        } else if (count_n >= 14 && count_n < 17) {
+          $("#count").css({ "font-size": "64px", color: "#f2a1a6" });
+        } else if (count_n === 17) {
+          $("#count").css({ "font-size": "84px", color: "#00a479" });
+        } else {
+          $("#count").css({ "font-size": "0px" });
+        }
+      }
+
+      // ボタンの制限
+      function Buttun_Lim() {
+        const sabun = count_p_click - count_m_click;
+
+        // プラスボタン
+        if (count_n < 17 && sabun < 3) {
+          $("#button_p").prop("disabled", false);
+        } else {
+          $("#button_p").prop("disabled", true);
+        }
+
+        // マイナスボタン
+        if (count_n > 1 && sabun > 0) {
+          $("#button_m").prop("disabled", false);
+        } else {
+          $("#button_m").prop("disabled", true);
+        }
+
+        // 決定ボタン
+        if (count_p_click > 0 && sabun > 0) {
+          $("#button_con").prop("disabled", false);
+        } else {
+          $("#button_con").prop("disabled", true);
+        }
+      }
+
+      //リセット用
+      function Reset() {
+        count_n = 0;
+        count_p_click = 0;
+        count_m_click = 0;
+      }
+
+      // ターンの定義
+      function OneTurn() {
+        count_p_click = 0;
+        count_m_click = 0;
+        $("#count p").text(count_n);
+        Fontsize_Color();
+        CPULevelDisplay();
+
+        //ハンバーガーメニューの操作
+        if (count_n > 0) {
+          $("#hamburger").prop("disabled", true).addClass("fix-menu-closed");
+          $("#header-menu a").prop("disabled", true);
+        } else {
+          $("#hamburger")
+            .prop("disabled", false)
+            .removeClass("fix-menu-closed");
+          $("#header-menu a").prop("disabled", false);
+        }
+
+        // ゲーム終了の判定
+        if (count_n >= 17) {
+          $("#button_p").prop("disabled", true);
+          $("#button_m").prop("disabled", true);
+          $("#button_con").prop("disabled", true);
+          setTimeout(function () {
+            $("section h1").first().text("ゲーム終了");
+          }, 1000);
+        }
+
+        Buttun_Lim();
+        if (count_n < 17) {
+          $("section h1").first().text("あなたの番です");
+
+          $("#count_report p").html(`現在のカウンター: ${count_n}`);
+        }
+      }
+
+      //NewGame用のボタン
+      function NewGameButtonSetUP() {
+        //プラスボタン
+        $("#button_p").on("click", function () {
+          if (count_n < 17) {
+            count_n++;
+            console.log("表示の数" + count_n);
+
+            count_p_click++;
+            console.log("プラスのクリック数" + count_p_click);
+
+            $("#count p").text(count_n);
+            Fontsize_Color();
+            Buttun_Lim(); // ボタン制限を更新
+          }
+        });
+
+        // マイナスボタン
+        $("#button_m").on("click", function () {
+          if (count_n > 1) {
+            count_n--;
+            console.log("表示の数" + count_n);
+
+            count_m_click++;
+            console.log("マイナスのクリック数" + count_m_click);
+
+            $("#count p").text(count_n);
+            Fontsize_Color();
+            Buttun_Lim(); // ボタン制限を更新
+          }
+        });
+        // 決定ボタン
+        $("#button_con").on("click", function () {
+          if (count_n >= 17) {
+            alert("カウンターが 17 になりました。");
+            setTimeout(function () {
+              $("#count_report p").html("あなたの負けです！");
+              $("#count_report p").css({
+                "font-size": "40px",
+                color: "#39bcdd",
+                "font-weight": "bold",
+              });
+              $("#button").html(
+                "<div id =lose_button class=relode><a href=#>最初から挑戦する</a></div>"
+              );
+            }, 1000);
+            OneTurn(); // ボタンを無効化
+            return;
+          }
+
+          if (count_n === 17) {
+            setTimeout(function () {
+              $("#count_report p").html(ゲーム終了);
+            }, 1000); //表示を遅らせる
+          }
+
+          // CPUの動き (CPUのロジック)
+          let CPU_count; //先に定義しておく，ifの中で定義しない
+          const jouyo = count_n % 4;
+
+          if (count_n === 16) {
+            CPU_count = 1; //CPU負け用
+          } else if (jouyo === 0 && count_n < 16) {
+            CPU_count = Math.floor(Math.random() * 3) + 1; //４の倍数でランダム
+          } else {
+            if (cpu_level === "oni") {
+              //おにの設定
+              CPU_count = 4 - jouyo;
+            } else if (cpu_level === "strong" && count_n > 8) {
+              //つよいの設定
+              CPU_count = 4 - jouyo;
+            } else if (cpu_level === "normal" && count_n > 12) {
+              //普通の設定
+              CPU_count = 4 - jouyo;
+            } else {
+              CPU_count = Math.floor(Math.random() * 3) + 1;
+            }
+            console.log("乱数" + CPU_count);
+          }
+
+          count_n += CPU_count;
+
+          // CPUの操作を表示
+          if (count_n < 17) {
+            $("section h1").first().text("CPUの番です");
+          }
+
+          setTimeout(function () {
+            if (count_n >= 17) {
+              $("#count_report p").css({
+                "font-size": "40px",
+                color: "#f2a1a6",
+                "font-weight": "bold",
+              });
+              $("#count_report p").html("あなたの勝ちです！");
+
+              //ボタンをnewgame
+              $("#button").html(
+                "<div id =win_button class=relode><a href=#>New Game</a></div>"
+              );
+
+              alert(
+                `CPUが ${CPU_count} 進めました。現在の値は ${count_n} です。`
+              );
+            } else {
+              alert(
+                `CPUが ${CPU_count} 進めました。現在の値は ${count_n} です。あなたの番です！`
+              );
+            }
+            Fontsize_Color();
+            OneTurn();
+          }, 1500); //表示を遅らせる
+
+          setTimeout(function () {
+            if (count_n <= 17) {
+              $("#count p").text(count_n);
+              Fontsize_Color();
+            }
+          }, 1000); //表示を遅らせる
+        });
+      }
+
+      NewGameButtonSetUP(); //初回のボタン有効用
+
+      // レベルの書き換え
+      $(document).ready(function () {
+        $("#level-normal").on("click", function (e) {
+          e.preventDefault();
+          cpu_level = "normal";
+          CPULevelDisplay();
+          btn.classList.remove("open");
+          menu.classList.remove("open");
+          menu.style.height = "0";
+          $("header").css("background-color", "#39bcdd");
+          $("#cpu_image").html('<img src="images/cpu_image_0.png" alt="">');
+        });
+
+        $("#level-strong").on("click", function (e) {
+          e.preventDefault();
+          cpu_level = "strong";
+          CPULevelDisplay();
+          btn.classList.remove("open");
+          menu.classList.remove("open");
+          menu.style.height = "0";
+          $("header").css("background-color", "#f2a1a6");
+          $("#cpu_image").html('<img src="images/cpu_image_1.png" alt="">');
+        });
+
+        $("#level-oni").on("click", function (e) {
+          e.preventDefault();
+          cpu_level = "oni";
+          CPULevelDisplay();
+          btn.classList.remove("open");
+          menu.classList.remove("open");
+          menu.style.height = "0";
+          $("header").css("background-color", "#00a479");
+          $("#cpu_image").html('<img src="images/cpu_image_2.png" alt="">');
+        });
+      });
+
+      $(document).ready(function () {
+        // ページ読み込み時ルール説明入れたかった
+        OneTurn(); //ボタンをクリックさせないため，1回消費させる
+      });
+
+      //勝った時のボタン　レベルアップさせたい
+      $(document).on("click", "#win_button", function (e) {
+        e.preventDefault(); // リンクのデフォルト動作（トップへ移動）を停止
+
+        //カウンターをリセットする
+        Reset();
+
+        $("#button").html(first_button); //元のボタンに書き換え
+        $("#count_report p").css({ "font-size": "16px", color: "black" });
+
+        Buttun_Lim();
+        NewGameButtonSetUP(); //再定義しないと出ない？
+
+        Fontsize_Color();
+        OneTurn();
+        // レベルアップ
+
+        if (cpu_level === "normal") {
+          cpu_level = "strong";
+          alert("難易度を「つよい」に設定しました。");
+          $("header").css("background-color", "#f2a1a6");
+          $("#cpu_image").html('<img src="images/cpu_image_1.png" alt="">');
+          CPULevelDisplay();
+        } else if (cpu_level === "strong") {
+          cpu_level = "oni";
+          alert("難易度を「おに」に設定しました。");
+          $("header").css("background-color", "#00a479");
+          $("#cpu_image").html('<img src="images/cpu_image_2.png" alt="">');
+          CPULevelDisplay();
+        }
+      });
+
+      //負けた時のボタン
+      $(document).on("click", "#lose_button", function (e) {
+        e.preventDefault(); // リンクのデフォルト動作（トップへ移動）を停止
+        location.reload(); //リロードする
+      });
+    </script>
+  </body>
+</html>
