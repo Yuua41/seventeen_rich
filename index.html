@@ -42,7 +42,7 @@
       </section>
 
       <section id="button">
-        <button id="button_m">-1</button>
+        <button id="button_m">戻る</button>
         <button id="button_p">+1</button>
         <button id="button_con">決定</button>
       </section>
@@ -96,6 +96,8 @@
       $("#count p").text(count_n);
       $("section h1").first().text("あなたの番です");
       $("#count_report p").text(`現在のカウンター: ${count_n}`);
+      $("#count_report p").css('font-weight', 'bold');
+
 
       // 数字の色とフォント
       function Fontsize_Color() {
@@ -171,15 +173,10 @@
           $("#button_con").prop("disabled", true);
           setTimeout(function () {
             $("section h1").first().text("ゲーム終了");
-          }, 1000);
+          }, 2000);
         }
 
         Buttun_Lim();
-        if (count_n < 17) {
-          $("section h1").first().text("あなたの番です");
-
-          $("#count_report p").html(`現在のカウンター: ${count_n}`);
-        }
       }
 
       //NewGame用のボタン
@@ -216,7 +213,7 @@
         // 決定ボタン
         $("#button_con").on("click", function () {
           if (count_n >= 17) {
-            alert("カウンターが 17 になりました。");
+            // alert("カウンターが 17 になりました。");
             setTimeout(function () {
               $("#count_report p").html("あなたの負けです！");
               $("#count_report p").css({
@@ -235,7 +232,7 @@
           if (count_n === 17) {
             setTimeout(function () {
               $("#count_report p").html(ゲーム終了);
-            }, 1000); //表示を遅らせる
+            }, 2000); //表示を遅らせる
           }
 
           // CPUの動き (CPUのロジック)
@@ -267,6 +264,13 @@
           // CPUの操作を表示
           if (count_n < 17) {
             $("section h1").first().text("CPUの番です");
+            $("#count_report p").fadeOut();
+            setTimeout(function () {
+              $("#count_report p").html(
+                `CPUが ${CPU_count} 進めました。現在の値は ${count_n} です。`
+              );
+              $("#count_report p").fadeIn();
+            }, 1300);
           }
 
           setTimeout(function () {
@@ -282,18 +286,14 @@
               $("#button").html(
                 "<div id =win_button class=relode><a href=#>New Game</a></div>"
               );
-
-              alert(
-                `CPUが ${CPU_count} 進めました。現在の値は ${count_n} です。`
-              );
-            } else {
-              alert(
-                `CPUが ${CPU_count} 進めました。現在の値は ${count_n} です。あなたの番です！`
-              );
             }
+
             Fontsize_Color();
             OneTurn();
-          }, 1500); //表示を遅らせる
+          }, 2000); //表示を遅らせる
+          setTimeout(function () {
+            $("section h1").first().text("あなたの番です");
+          }, 2000);
 
           setTimeout(function () {
             if (count_n <= 17) {
@@ -359,6 +359,9 @@
 
         Buttun_Lim();
         NewGameButtonSetUP(); //再定義しないと出ない？
+      $("#count_report p").text(`現在のカウンター: ${count_n}`);
+      $("h1").text(`あなたの番です`);
+
 
         Fontsize_Color();
         OneTurn();
