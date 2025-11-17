@@ -3,7 +3,7 @@
   box-sizing: border-box;
 }
 
-body{
+body {
   background-color: #fdfdfd;
 }
 
@@ -31,39 +31,37 @@ header {
   background-color: #39bcdd;
 }
 
-img{
+img {
   width: 150px;
 }
 
-.rule{
+.rule {
   padding: 5px 30px;
 }
 
-.relode a{
-    color: #fafafa;
-    font-size: 18px;
-    font-weight: bold;
-    background: #222222;
-    padding: 15px 150px;
-    transition: .5s;
-    display: inline-block;
-    text-decoration: none;
+.relode a {
+  color: #fafafa;
+  font-size: 18px;
+  font-weight: bold;
+  background: #222222;
+  padding: 15px 150px;
+  transition: 0.5s;
+  display: inline-block;
+  text-decoration: none;
 }
 
-
-.relode a:hover{
-    border-radius: 12px;
-    transform: scale(1.1);
+.relode a:hover {
+  border-radius: 12px;
+  transform: scale(1.1);
 }
 
-
-.lavel{
+.lavel {
   padding-left: 30px;
 }
 
 #button button {
   font-size: 20px;
-  cursor: pointer; 
+  cursor: pointer;
   /* 指が出る */
   border: color(black);
   border-radius: 10px;
@@ -73,7 +71,7 @@ img{
 
 #button button:disabled {
   background-color: #cacaca;
-  cursor: not-allowed; 
+  cursor: not-allowed;
   /* 禁止マーク */
 }
 
@@ -88,7 +86,6 @@ nav {
   right: 0;
   text-align: right;
   background-color: rgba(255, 255, 255, 0.9);
-
 }
 
 ul {
@@ -108,16 +105,16 @@ li a {
 }
 
 li a:hover {
-    background-color: #00a479;
-    z-index: 1;
-    font-weight: bold;
-    color: #fafafa;
-    /* 浮かせないと出ない？ */
+  background-color: #00a479;
+  z-index: 1;
+  font-weight: bold;
+  color: #fafafa;
+  /* 浮かせないと出ない？ */
 }
 
-.lavel{
-    display: flex;
-    align-items: flex-end;
+.lavel {
+  display: flex;
+  align-items: flex-end;
 }
 
 .hamburger {
@@ -165,9 +162,65 @@ li a:hover {
   transform: translateY(-6px) rotate(33deg);
 }
 
-.fix-menu-closed{
+.fix-menu-closed {
   opacity: 0.3;
   cursor: default;
-  cursor: not-allowed; 
+  cursor: not-allowed;
   /* 禁止マーク */
+}
+
+#rule {
+  display: none;
+  position: fixed;
+  z-index: 100; /* 最前面に表示 */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #101010;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+/* ポップアップの中身 */
+.rule {
+  background-color: #eaeaea;
+  margin: auto;
+  padding: 30px;
+  border: 1px black;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.start-button {
+  background: #00a479;
+  color: #fafafa;
+  border: none;
+  margin-top: 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  width: 200px;
+  height: 30px;
+  text-align: center;
+}
+
+.start-button-box {
+  display: flex;
+  justify-content: center;
+}
+
+.start-button-box a {
+  transition: 0.5s;
+}
+
+.start-button-box a:hover {
+  border-radius: 12px;
+  transform: scale(1.1);
 }
