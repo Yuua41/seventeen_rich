@@ -61,6 +61,7 @@
         </div>
       </div>
     </main>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script>
@@ -96,6 +97,7 @@
       let count_n = 0;
       let count_p_click = 0; // プラスボタン
       let count_m_click = 0; // マイナスボタンは戻るボタンに名称変更
+      let start_player = "player"; // 先攻後攻用
 
       const first_button = $("#button").html(); //newgameに書き換えたボタンを元に戻す用
 
@@ -103,6 +105,20 @@
       $("section h1").first().text("あなたの番です");
       $("#count_report p").text(`現在のカウンター: ${count_n}`);
       $("#count_report p").css("font-weight", "bold");
+
+      // 先攻後攻を決める
+      function FirstPlayer() {
+        if (cpu_level === "oni") {
+          start_player = "player";
+          alert("あなたの先攻です！");
+        } else if (Math.random() < 0.5) {
+          start_player = "player";
+          alert("あなたの先攻です！");
+        } else {
+          start_player = "cpu";
+          alert("cpuの先攻です！");
+        }
+      }
 
       // 数字の色とフォント
       function Fontsize_Color() {
@@ -152,6 +168,65 @@
         count_m_click = 0;
       }
 
+      function ExecuteCPUTurn() {
+        // CPUのロジック (元の決定ボタンのロジックから移動)
+        let CPU_count;
+        const jouyo = count_n % 4;
+
+        if (count_n === 16) {
+          CPU_count = 1;
+        } else if (jouyo === 0 && count_n < 16) {
+          CPU_count = Math.floor(Math.random() * 3) + 1;
+        } else {
+          if (cpu_level === "oni") {
+            CPU_count = 4 - jouyo;
+          } else if (cpu_level === "strong" && count_n > 8) {
+            CPU_count = 4 - jouyo;
+          } else if (cpu_level === "normal" && count_n > 12) {
+            CPU_count = 4 - jouyo;
+          } else {
+            CPU_count = Math.floor(Math.random() * 3) + 1;
+          }
+          console.log("乱数" + CPU_count);
+        }
+
+        count_n += CPU_count;
+
+        // CPUの操作を表示
+        $("#count_report p").fadeOut();
+        setTimeout(function () {
+          $("#count_report p").html(
+            `CPUが ${CPU_count} 進めました。現在の値は ${count_n} です。`
+          );
+          $("#count_report p").fadeIn();
+
+          $("#count p").text(count_n);
+          Fontsize_Color();
+        }, 1300);
+
+        // CPUの移動後の処理
+        setTimeout(function () {
+          if (count_n >= 17) {
+            // あなたの勝ち
+            $("#count_report p").css({
+              "font-size": "40px",
+              color: "#f2a1a6",
+              "font-weight": "bold",
+            });
+            $("#count_report p").html("あなたの勝ちです！");
+
+            //ボタンをnewgame
+            $("#button").html(
+              "<div id =win_button class=relode><a href=#>New Game</a></div>"
+            );
+          } else {
+            // ゲーム続行の場合、ターンをプレイヤーに戻す
+            start_player = "player";
+          }
+          OneTurn(); // 次のターン処理へ
+        }, 2000);
+      }
+
       // ターンの定義
       function OneTurn() {
         count_p_click = 0;
@@ -173,15 +248,24 @@
 
         // ゲーム終了の判定
         if (count_n >= 17) {
-          $("#button_p").prop("disabled", true);
-          $("#button_m").prop("disabled", true);
-          $("#button_con").prop("disabled", true);
+          $("#button button").prop("disabled", true);
           setTimeout(function () {
             $("section h1").first().text("ゲーム終了");
           }, 2000);
+          return;
         }
 
-        Buttun_Lim();
+        // ターンの制御
+        if (start_player === "cpu") {
+          $("section h1").first().text("CPUの番です");
+          $("#button button").prop("disabled", true); // プレイヤーボタンを無効化
+          ExecuteCPUTurn(); // CPUの動作を実行
+        } else {
+          // プレイヤーの番
+          $("section h1").first().text("あなたの番です");
+          $("#button button").prop("disabled", false); // プレイヤーボタンを有効化
+          Buttun_Lim();
+        }
       }
 
       //NewGame用のボタン
@@ -215,10 +299,11 @@
             Buttun_Lim(); // ボタン制限を更新
           }
         });
+
         // 決定ボタン
         $("#button_con").on("click", function () {
           if (count_n >= 17) {
-            // alert("カウンターが 17 になりました。");
+            // あなたの負け処理
             setTimeout(function () {
               $("#count_report p").html("あなたの負けです！");
               $("#count_report p").css({
@@ -234,78 +319,13 @@
             return;
           }
 
-          if (count_n === 17) {
-            setTimeout(function () {
-              $("#count_report p").html(ゲーム終了);
-            }, 2000); //表示を遅らせる
-          }
+          // プレイヤーが数えた数をレポート
+          const your_count = count_p_click - count_m_click;
+          $("#count_report p").html();
 
-          // CPUの動き (CPUのロジック)
-          let CPU_count; //先に定義しておく，ifの中で定義しない
-          const jouyo = count_n % 4;
-
-          if (count_n === 16) {
-            CPU_count = 1; //CPU負け用
-          } else if (jouyo === 0 && count_n < 16) {
-            CPU_count = Math.floor(Math.random() * 3) + 1; //４の倍数でランダム
-          } else {
-            if (cpu_level === "oni") {
-              //おにの設定
-              CPU_count = 4 - jouyo;
-            } else if (cpu_level === "strong" && count_n > 8) {
-              //つよいの設定
-              CPU_count = 4 - jouyo;
-            } else if (cpu_level === "normal" && count_n > 12) {
-              //普通の設定
-              CPU_count = 4 - jouyo;
-            } else {
-              CPU_count = Math.floor(Math.random() * 3) + 1;
-            }
-            console.log("乱数" + CPU_count);
-          }
-
-          count_n += CPU_count;
-
-          // CPUの操作を表示
-          if (count_n < 17) {
-            $("section h1").first().text("CPUの番です");
-            $("#count_report p").fadeOut();
-            setTimeout(function () {
-              $("#count_report p").html(
-                `CPUが ${CPU_count} 進めました。現在の値は ${count_n} です。`
-              );
-              $("#count_report p").fadeIn();
-            }, 1300);
-          }
-
-          setTimeout(function () {
-            if (count_n >= 17) {
-              $("#count_report p").css({
-                "font-size": "40px",
-                color: "#f2a1a6",
-                "font-weight": "bold",
-              });
-              $("#count_report p").html("あなたの勝ちです！");
-
-              //ボタンをnewgame
-              $("#button").html(
-                "<div id =win_button class=relode><a href=#>New Game</a></div>"
-              );
-            }
-
-            Fontsize_Color();
-            OneTurn();
-          }, 2000); //表示を遅らせる
-          setTimeout(function () {
-            $("section h1").first().text("あなたの番です");
-          }, 2000);
-
-          setTimeout(function () {
-            if (count_n <= 17) {
-              $("#count p").text(count_n);
-              Fontsize_Color();
-            }
-          }, 1000); //表示を遅らせる
+          // ターンをCPUに切り替え
+          start_player = "cpu";
+          OneTurn();
         });
       }
 
@@ -357,44 +377,25 @@
 
         modal.style.display = "flex";
 
-        // メインコンテンツのボタンを非活性化 (モーダル表示中は操作させない)
-
+        // メインのボタンをルール説明時にオフ
         $("#button button").prop("disabled", true);
-
         $("#hamburger").prop("disabled", true).addClass("fix-menu-closed");
 
-        // モーダルを閉じてゲームを開始する
+        // ルール説明を閉じてゲームを開始する
 
         startBtn.addEventListener("click", () => {
-          // 1. 透明度を0にしてフェードアウトを開始
+          // 透明度を0にしてフェードアウトを開始
           modal.style.opacity = "0";
 
-          // 2. 0.5秒後にdisplay: noneを適用し、アニメーション後に要素を消す
+          // 0.5秒後にdisplay: none
           setTimeout(() => {
             modal.style.display = "none";
 
+            FirstPlayer(); // 先攻・後攻を決定
+
             // ゲームを開始する準備
             OneTurn();
-
-            // ボタンを元に戻す
-            $("#button button").prop("disabled", false);
           }, 1000);
-        });
-
-        // モーダルの外側がクリックされた時も閉じる
-
-        window.addEventListener("click", (event) => {
-          if (event.target === modal) {
-            modal.style.display = "none";
-
-            // ゲームを開始する準備
-
-            OneTurn();
-
-            //ボタンを元に戻す
-
-            $("#button button").prop("disabled", false);
-          }
         });
       });
 
@@ -411,10 +412,10 @@
         Buttun_Lim();
         NewGameButtonSetUP(); //再定義しないと出ない？
         $("#count_report p").text(`現在のカウンター: ${count_n}`);
-        $("h1").text(`あなたの番です`);
 
         Fontsize_Color();
-        OneTurn();
+        OneTurn(); // CPU先攻の場合は動く
+
         // レベルアップ
 
         if (cpu_level === "normal") {
