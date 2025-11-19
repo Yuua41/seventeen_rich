@@ -31,7 +31,7 @@
       </section>
 
       <section>
-        <h1>あなたの番です</h1>
+        <h1>手番</h1>
       </section>
 
       <section id="count_report">
@@ -406,16 +406,6 @@
         //カウンターをリセットする
         Reset();
 
-        $("#button").html(first_button); //元のボタンに書き換え
-        $("#count_report p").css({ "font-size": "16px", color: "black" });
-
-        Buttun_Lim();
-        NewGameButtonSetUP(); //再定義しないと出ない？
-        $("#count_report p").text(`現在のカウンター: ${count_n}`);
-
-        Fontsize_Color();
-        OneTurn(); // CPU先攻の場合は動く
-
         // レベルアップ
 
         if (cpu_level === "normal") {
@@ -431,6 +421,18 @@
           $("#cpu_image").html('<img src="images/cpu_image_2.png" alt="">');
           CPULevelDisplay();
         }
+
+        $("#button").html(first_button); //元のボタンに書き換え
+        $("#count_report p").css({ "font-size": "16px", color: "black" });
+
+        Buttun_Lim();
+        NewGameButtonSetUP(); //再定義しないと出ない？
+        $("#count_report p").text(`現在のカウンター: ${count_n}`);
+        $("section h1").first().text("あなたの番です");
+
+        Fontsize_Color();
+        FirstPlayer(); // New Gameで先攻後攻
+        OneTurn(); // CPU先攻の場合は動く
       });
 
       //負けた時のボタン
@@ -438,6 +440,7 @@
         e.preventDefault(); // リンクのデフォルト動作（トップへ移動）を停止
         location.reload(); //リロードする
       });
+
     </script>
   </body>
 </html>
