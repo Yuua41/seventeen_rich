@@ -102,7 +102,7 @@
       const first_button = $("#button").html(); //newgameに書き換えたボタンを元に戻す用
 
       $("#count p").text(count_n);
-      $("section h1").first().text("あなたの番です");
+      $("section h1").first().text("ゲームスタート！");
       $("#count_report p").text(`現在のカウンター: ${count_n}`);
       $("#count_report p").css("font-weight", "bold");
 
@@ -208,6 +208,8 @@
         setTimeout(function () {
           if (count_n >= 17) {
             // あなたの勝ち
+            $("section h1").text("ゲーム終了");
+            
             $("#count_report p").css({
               "font-size": "40px",
               color: "#f2a1a6",
@@ -249,9 +251,6 @@
         // ゲーム終了の判定
         if (count_n >= 17) {
           $("#button button").prop("disabled", true);
-          setTimeout(function () {
-            $("section h1").first().text("ゲーム終了");
-          }, 2000);
           return;
         }
 
@@ -305,15 +304,26 @@
           if (count_n >= 17) {
             // あなたの負け処理
             setTimeout(function () {
+              $("section h1").text("ゲーム終了");
               $("#count_report p").html("あなたの負けです！");
               $("#count_report p").css({
                 "font-size": "40px",
                 color: "#39bcdd",
                 "font-weight": "bold",
               });
-              $("#button").html(
-                "<div id =lose_button class=relode><a href=#>最初から挑戦する</a></div>"
-              );
+
+              if (cpu_level === "oni") {
+                $("#count").html(
+                  "<div id =lose_button class=relode><a href=#>最初から挑戦する</a></div>"
+                );
+                $("#button").html(
+                  "<div class=omake><h2>このゲームの必勝法</h2><p>17を言うと負け，すなわち，16を言えば勝ちとなる。</p><p>1回に言うことのできる数字は1から3までなので，CPUがどのような数進めても，合わせて4進めることができる。16を言えば勝てるので，自分の番で4の倍数になるように言えば，必ず勝つことができる。もしも31を数えるゲームだった場合は，30を言えば良いので，4で割るとあまりが2の数を言っていけば良い。</p><p>今回の場合，最適な戦略をとれば後手が必ず勝つ。(レベル「おに」ではプレイヤー先攻で固定しているので，「おに」には勝つことができません。ごめんね。)</p></div>"
+                );
+              } else {
+                $("#button").html(
+                  "<div id =lose_button class=relode><a href=#>最初から挑戦する</a></div>"
+                );
+              }
             }, 1000);
             OneTurn(); // ボタンを無効化
             return;
@@ -427,12 +437,19 @@
 
         Buttun_Lim();
         NewGameButtonSetUP(); //再定義しないと出ない？
-        $("#count_report p").text(`現在のカウンター: ${count_n}`);
-        $("section h1").first().text("あなたの番です");
 
         Fontsize_Color();
-        FirstPlayer(); // New Gameで先攻後攻
+        FirstPlayer(); // New Gameで先攻後攻,oneturnより先に置かないと動きと合わなくなる。
+
         OneTurn(); // CPU先攻の場合は動く
+
+        $("#count_report p").text(`現在のカウンター: ${count_n}`);
+
+        if (start_player === "player") {
+          $("section h1").text("あなたの番です");
+        } else {
+          $("section h1").text("CPUの番です");
+        }
       });
 
       //負けた時のボタン
@@ -440,7 +457,6 @@
         e.preventDefault(); // リンクのデフォルト動作（トップへ移動）を停止
         location.reload(); //リロードする
       });
-
     </script>
   </body>
 </html>
