@@ -39,6 +39,19 @@ img {
   padding: 5px 30px;
 }
 
+.onibox{
+display: flex;
+justify-content: center;
+flex-direction: column;
+}
+
+.omake{
+  margin-top: 100px;
+  width: auto;
+  padding: 50px;
+  font-size: 12px;
+}
+
 .relode a {
   color: #fafafa;
   font-size: 18px;
